@@ -1,0 +1,172 @@
+// Strapi API configuration
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+
+// Helper function to get full image URL
+export function getImageUrl(imagePath: string | null | undefined): string | null {
+  if (!imagePath) return null;
+
+  // If it's already an absolute URL, return as is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+
+  // Otherwise, prepend the Strapi base URL
+  return `${STRAPI_URL}${imagePath}`;
+}
+
+// Photo interface
+export interface PhotoProfile {
+  id: number;
+  documentId: string;
+  name: string;
+  alternativeText: string | null;
+  caption: string | null;
+  width: number;
+  height: number;
+  formats?: {
+    small?: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string | null;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
+    thumbnail?: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string | null;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
+    medium?: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string | null;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
+    large?: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string | null;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
+  };
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl: string | null;
+  provider: string;
+  provider_metadata: any;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+// Salesperson interface matching the actual API response
+export interface Salesperson {
+  id: number;
+  documentId: string;
+  sales_uid: string;
+  email: string;
+  surename: string;
+  address: string;
+  city: string;
+  province: string;
+  phonenumber: string;
+  wanumber: string;
+  namasupervisor: string;
+  approved: boolean;
+  blocked: boolean;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  online_stat: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  photo_profile?: PhotoProfile;
+}
+
+export interface StrapiResponse {
+  data: Salesperson[];
+  meta?: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
+// Fetch salesperson by UID from sales-profiles endpoint
+export async function getSalespersonByUid(uid: string): Promise<Salesperson | null> {
+  try {
+    const headers: { [key: string]: string } = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add API key if available
+    if (process.env.STRAPI_API_KEY) {
+      headers['Authorization'] = `Bearer ${process.env.STRAPI_API_KEY}`;
+    }
+
+    // Build URL with proper encoding
+    const url = new URL(`${STRAPI_URL}/api/sales-profiles`);
+    url.searchParams.append('filters[sales_uid][$eq]', uid);
+    url.searchParams.append('populate', '*');
+
+    console.log(`Fetching from: ${url.toString()}`);
+
+    const response = await fetch(
+      url.toString(),
+      {
+        method: 'GET',
+        headers,
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`API Error: ${response.status} ${response.statusText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: StrapiResponse = await response.json();
+
+    if (data.data.length === 0) {
+      console.log(`No salesperson found with UID: ${uid}`);
+      return null;
+    }
+
+    console.log(`Found salesperson: ${data.data[0].surename} (${data.data[0].sales_uid})`);
+    return data.data[0];
+  } catch (error) {
+    console.error('Error fetching salesperson:', error);
+    return null;
+  }
+}
