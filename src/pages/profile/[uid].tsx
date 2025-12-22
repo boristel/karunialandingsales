@@ -189,11 +189,7 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ salesperson, error }) => {
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({ params }) => {
   const uid = params?.uid as string;
 
-  console.log(`getServerSideProps called with UID: ${uid}`);
-  console.log(`STRAPI_URL: ${process.env.NEXT_PUBLIC_STRAPI_URL}`);
-
   if (!uid) {
-    console.log('No UID provided');
     return {
       props: {
         salesperson: null,
@@ -203,11 +199,9 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({
   }
 
   try {
-    console.log(`Fetching salesperson data for UID: ${uid}`);
     const salesperson = await getSalespersonByUid(uid);
 
     if (!salesperson) {
-      console.log(`Salesperson not found for UID: ${uid}`);
       return {
         props: {
           salesperson: null,
@@ -216,7 +210,6 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({
       };
     }
 
-    console.log(`Successfully fetched salesperson: ${salesperson.surename}`);
     return {
       props: {
         salesperson,

@@ -141,8 +141,6 @@ export async function getSalespersonByUid(uid: string): Promise<Salesperson | nu
     url.searchParams.append('filters[sales_uid][$eq]', uid);
     url.searchParams.append('populate', '*');
 
-    console.log(`Fetching from: ${url.toString()}`);
-
     const response = await fetch(
       url.toString(),
       {
@@ -159,11 +157,9 @@ export async function getSalespersonByUid(uid: string): Promise<Salesperson | nu
     const data: StrapiResponse = await response.json();
 
     if (data.data.length === 0) {
-      console.log(`No salesperson found with UID: ${uid}`);
       return null;
     }
 
-    console.log(`Found salesperson: ${data.data[0].surename} (${data.data[0].sales_uid})`);
     return data.data[0];
   } catch (error) {
     console.error('Error fetching salesperson:', error);
