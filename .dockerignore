@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Next.js build output
+.next
+out
+dist
+build
+
+# Environment files
+.env
+.env*.local
+.env.local
+
+# Development files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Claude Code
+.claude
+
+# Git
+.git
+.gitignore
+
+# Documentation (keep in repo, exclude from image)
+README.md
+CLAUDE.md
+DEPLOYMENT.md
+err-notes.md
+perintah.md
+sample-data.md
+
+# Test coverage
+coverage
+.nyc_output
+
+# Misc
+.DS_Store
+*.pem
+*.log
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# Temporary files
+*.tmp
+.cache

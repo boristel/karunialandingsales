@@ -1,0 +1,27 @@
+# Nixpacks Configuration for Karunia Motor Landing Pages
+# This file enables automatic deployment on Coolify
+
+[phases.build]
+# Nix packages required for build
+nixPkgs = ["nodejs-18_x", "npm-9_x"]
+# Commands to build the application
+cmds = ["npm ci", "npm run build"]
+
+[phases.start]
+# Commands to start the application
+cmds = ["npm run start"]
+
+[start]
+cmd = "npm run start"
+
+[variables]
+# Environment variables for build and runtime
+NODE_ENV = "production"
+PORT = "3000"
+
+# Static site configuration is NOT available because this app uses:
+# - getServerSideProps (Server-Side Rendering)
+# - API routes and server-side data fetching
+# This requires a Node.js server runtime
+
+# For more information: https://coolify.io/docs/deployment/nixpacks
