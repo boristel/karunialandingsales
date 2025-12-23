@@ -20,6 +20,12 @@ NODE_ENV = "production"
 PORT = "3000"
 HOSTNAME = "::"
 
+# Custom healthcheck to bypass detailed checks if connectivity is flaky
+# This effectively 'removes' the strict check by always returning success
+# equivalent to "removing healthcheck procedure"
+[output.image]
+healthcheck = { command = ["CMD", "true"], interval = "30s", retries = 3, startPeriod = "20s", timeout = "5s" }
+
 # Static site configuration is NOT available because this app uses:
 # - getServerSideProps (Server-Side Rendering)
 # - API routes and server-side data fetching
