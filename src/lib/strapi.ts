@@ -112,8 +112,21 @@ export interface Salesperson {
   photo_profile?: PhotoProfile;
 }
 
-export interface StrapiResponse {
-  data: Salesperson[];
+export interface Branch {
+  id: number;
+  documentId: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  city: string;
+  province: string;
+  phone_number: string;
+  whatsapp_number: string;
+}
+
+export interface StrapiResponse<T> {
+  data: T[];
   meta?: {
     pagination?: {
       page: number;
@@ -141,6 +154,8 @@ export async function getSalespersonByUid(uid: string): Promise<Salesperson | nu
     url.searchParams.append('filters[sales_uid][$eq]', uid);
     url.searchParams.append('populate', '*');
 
+    // console.log('Fetching URL:', url.toString());
+
     const response = await fetch(
       url.toString(),
       {
@@ -154,7 +169,8 @@ export async function getSalespersonByUid(uid: string): Promise<Salesperson | nu
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data: StrapiResponse = await response.json();
+    const data: StrapiResponse<Salesperson> = await response.json();
+    // console.log('API Data:', JSON.stringify(data, null, 2));
 
     if (data.data.length === 0) {
       return null;
@@ -164,5 +180,34 @@ export async function getSalespersonByUid(uid: string): Promise<Salesperson | nu
   } catch (error) {
     console.error('Error fetching salesperson:', error);
     return null;
+  }
+}
+
+// Fetch all branches
+export async function getBranches(): Promise<Branch[]> {
+  try {
+    const headers: { [key: string]: string } = {
+      'Content-Type': 'application/json',
+    };
+
+    if (process.env.STRAPI_API_KEY) {
+      headers['Authorization'] = `Bearer ${process.env.STRAPI_API_KEY}`;
+    }
+
+    const response = await fetch(`${STRAPI_URL}/api/branches`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      console.error(`API Error: ${response.status} ${response.statusText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: StrapiResponse<Branch> = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    return [];
   }
 }

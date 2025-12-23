@@ -16,6 +16,12 @@ const nextConfig = {
       },
       {
         protocol: 'http',
+        hostname: 'karuniastrapi.nababancloud.com',
+        port: '',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'http',
         hostname: 'localhost',
         port: '1337',
         pathname: '/uploads/**',
