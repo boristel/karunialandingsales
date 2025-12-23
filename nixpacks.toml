@@ -18,7 +18,7 @@ cmd = "npm run start"
 # Environment variables for build and runtime
 NODE_ENV = "production"
 PORT = "3000"
-HOSTNAME = "0.0.0.0"
+HOSTNAME = "::"
 
 # Static site configuration is NOT available because this app uses:
 # - getServerSideProps (Server-Side Rendering)
